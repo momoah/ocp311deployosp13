@@ -1,0 +1,9 @@
+---
+bastion_hostvars: "{{ hostvars[groups.bastion | first] if groups.bastion else {} }}"
+bastion_public_ip: "{{ bastion_hostvars.public_v4 | default(None) }}"
+bastion_private_ip: "{{ bastion_hostvars.private_v4 | default(None) }}"
+bastion_username: cloud-user
+openshift_ssh_config_src_template: "ssh.config.j2"
+openshift_openstack_bastion_hostname: bastion
+openshift_openstack_user: openshift
+

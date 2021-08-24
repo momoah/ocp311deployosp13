@@ -1,0 +1,4 @@
+---
+- include_tasks: stack.yml
+  vars:
+    openshift_openstack_network_stack_state: absent

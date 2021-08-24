@@ -1,0 +1,139 @@
+---
+
+openshift_minor_release: 3.11.272
+
+ntp_servers: ["192.168.1.150"]
+openshift_install_examples: false
+
+openshift_openstack_clusterid: "openshift-mo1"
+openshift_openstack_public_dns_domain: "momolab"
+openshift_openstack_full_dns_domain: "{{openshift_openstack_clusterid}}.{{openshift_openstack_public_dns_domain}}"
+
+ 
+
+## openstack vars to generate cloud config source envvars
+
+openstack_auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
+openstack_project: "{{ lookup('env','OS_PROJECT_NAME') }}"
+openstack_domain: Default
+openstack_user_domain: "{{ lookup('env','OS_USER_DOMAIN_NAME') }}"
+openstack_project_domain: "{{ lookup('env','OS_PROJECT_DOMAIN_NAME') }}"
+openstack_username: "{{ lookup('env','OS_USERNAME') }}"
+openstack_password: "{{ lookup('env','OS_PASSWORD') }}"
+
+
+openshift_openstack_keypair_name: "ocp-deploy"
+openshift_openstack_default_image_name: "rhel7.7-image"
+
+ 
+# networking
+
+openshift_openstack_node_subnet_name: "openshift-mo1-subnet"
+openshift_openstack_router_name: "openshift-mo1-router"
+openshift_openstack_master_floating_ip: true
+openshift_openstack_infra_floating_ip: true
+openshift_openstack_compute_floating_ip: true
+
+# assuming the following:
+
+# 192.168.0.0/17 is used for pod network
+# 192.168.128.0/18 is used for service network
+
+openshift_openstack_subnet_cidr: "192.168.192.0/24"
+openshift_openstack_pool_start: "192.168.192.3"
+openshift_openstack_pool_end: "192.168.192.254"
+
+# node count
+
+openshift_openstack_num_masters: 1
+openshift_openstack_num_infra: 1
+openshift_openstack_num_cns: 0
+openshift_openstack_num_nodes: 2
+openshift_openstack_num_etcd: 0
+
+# node flavors
+
+openshift_openstack_master_flavor: "m1.master"
+openshift_openstack_infra_flavor: "m1.node"
+openshift_openstack_node_flavor: "m1.node"
+openshift_openstack_bastion_flavor: "m1.node"
+openshift_openstack_default_flavor: "m1.node"
+
+# misc
+
+openshift_openstack_use_lbaas_load_balancer: true
+
+# create separate cinder volumes for docker & etcd
+
+openshift_openstack_docker_volume_size: "50"
+openshift_openstack_docker_volume_type: "standard"
+openshift_openstack_etcd_volume_size: "1"
+
+# schedule master & infra nodes on different openstack hosts for HA
+# For production, please ensure '[anti-affinity]' is set to ensure
+# each master/infra is on a different host
+
+openshift_openstack_master_server_group_policies: '[soft-anti-affinity]'
+openshift_openstack_infra_server_group_policies: '[soft-anti-affinity]'
+
+# Additional ports required by Prometheus to monitor extras:
+
+# roles/openshift_openstack/defaults/main.yml
+# Adding it here with my extra ports will automatically add the extra ports (9100,8444) in my security groups
+
+# There is an openshift_openstack_node_secgroup_rules in each cluster specific kuryr.conf
+# which will over write this one
+
+openshift_openstack_node_secgroup_rules:
+
+  # NOTE(shadower): the 53 rules are needed for Kuryr
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 53
+    port_range_max: 53
+
+  - direction: ingress
+    protocol: udp
+    port_range_min: 53
+    port_range_max: 53
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 10250
+    port_range_max: 10250
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+
+  - direction: ingress
+    protocol: udp
+    port_range_min: 4789
+    port_range_max: 4789
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9100
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 8444
+    port_range_max: 8444
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+ 
+
+openshift_openstack_etcd_secgroup_rules:
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 2379
+    port_range_max: 2379
+    remote_ip_prefix: "{{ openshift_openstack_master_ingress_cidr }}"
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 2380
+    port_range_max: 2380
+    remote_ip_prefix: "{{ openshift_openstack_master_ingress_cidr }}"
+
+

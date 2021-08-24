@@ -1,0 +1,30 @@
+# Preparing the ocp deploy host to install OpenShift
+
+## Run as root:
+
+[root@ocp-deploy ~]# 
+
+Change OCP-deploy host root password and enable password login in case the keys get corrupted (by issuing an incorrect command)
+
+passwd root
+passwd cloud-user
+vi /etc/ssh/sshd_config 
+systemctl restart sshd
+
+Register the system
+
+subscription-manager register
+
+subscription-manager attach --pool=12345671234561234561234512243434
+
+subscription-manager release --set=7.7
+
+## Run as cloud-user:
+
+sudo subscription-manager repos --disable="*"
+
+sudo subscription-manager repos     --enable="rhel-7-server-rpms"     --enable="rhel-7-server-extras-rpms"     --enable="rhel-7-server-ose-3.11-rpms"     --enable="rhel-7-server-ansible-2.6-rpms"     --enable="rhel-7-server-openstack-13-rpms"     --enable="rhel-7-server-openstack-14-tools-rpms"
+
+sudo subscription-manager repo-override --repo=rhel-7-server-openstack-14-tools-rpms --add=includepkgs:"python2-openstacksdk.* python2-keystoneauth1.* python2-os-service-types.*"
+
+sudo yum -y install openshift-ansible python-openstackclient python2-heatclient python2-octaviaclient python2-shade python-dns git ansible

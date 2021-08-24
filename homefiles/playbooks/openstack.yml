@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  tasks:
+  
+    - name: shell
+      shell: |
+        openstack server list
+      register: openstack_output
+
+    - name: display shell output
+      debug:
+        var: openstack_output
+

@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  roles:
+    - openshift-openstack-sshconfig
+  vars:
+    openshift_ssh_config_dest_location: "/home/cloud-user/ssh.config"

@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  become: false
+  roles:
+    - openshift-openstack-network
+  vars:
+    openshift_openstack_network_action: provision

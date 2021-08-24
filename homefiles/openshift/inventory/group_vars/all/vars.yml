@@ -1,0 +1,110 @@
+---
+openshift_openstack_clusterid: "openshift"
+openshift_openstack_public_dns_domain: "momolab"
+openshift_openstack_dns_nameservers: ["192.168.1.150"]
+openshift_openstack_public_hostname_suffix: "-public"
+#openshift_openstack_nsupdate_zone: "{{ openshift_openstack_public_dns_domain }}"
+openshift_openstack_full_dns_domain: "{{openshift_openstack_clusterid}}.{{openshift_openstack_public_dns_domain}}"
+
+openshift_openstack_keypair_name: "ocp-deploy"
+openshift_openstack_external_network_name: "public"
+
+openshift_openstack_default_image_name: "rhel7.7"
+
+## Optional (Recommended) - This removes the need for floating IPs
+## on the OpenShift Cluster nodes
+openshift_openstack_node_subnet_name: "openshift-subnet"
+openshift_openstack_router_name: "openshift-router"
+openshift_openstack_master_floating_ip: false
+openshift_openstack_infra_floating_ip: false
+openshift_openstack_compute_floating_ip: false
+## End of Optional Floating IP section
+
+# assuming the following:
+
+# 192.168.0.0/17 is used for pod network
+# 192.168.128.0/18 is used for service network
+
+openshift_openstack_subnet_cidr: "192.168.192.0/24"
+openshift_openstack_pool_start: "192.168.192.3"
+openshift_openstack_pool_end: "192.168.192.254"
+
+openshift_openstack_num_masters: 3
+openshift_openstack_num_infra: 3
+openshift_openstack_num_cns: 0
+openshift_openstack_num_nodes: 2
+
+openshift_openstack_master_flavor: "m1.master"
+openshift_openstack_default_flavor: "m1.node"
+
+openshift_openstack_use_lbaas_load_balancer: true
+
+openshift_openstack_docker_volume_size: "5"
+
+ansible_user: openshift
+
+## cloud config
+openshift_openstack_disable_root: true
+openshift_openstack_user: openshift
+
+#openshift_openstack_master_server_group_policies: "soft-anti-affinity"
+#openshift_openstack_infra_server_group_policies: "soft-anti-affinity"
+
+## Red Hat subscription using user/password
+rhsub_user: "{{ lookup('env','OREG_AUTH_USER') }}"
+rhsub_pass: "{{ lookup('env','OREG_AUTH_PASSWORD') }}"
+rhsub_pool: 8a85f99b6b498682016b521dfe463949
+
+openshift_openstack_node_secgroup_rules:
+
+  # NOTE(shadower): the 53 rules are needed for Kuryr
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 53
+    port_range_max: 53
+
+  - direction: ingress
+    protocol: udp
+    port_range_min: 53
+    port_range_max: 53
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 10250
+    port_range_max: 10250
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+
+  - direction: ingress
+    protocol: udp
+    port_range_min: 4789
+    port_range_max: 4789
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9100
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 8444
+    port_range_max: 8444
+    remote_ip_prefix: "{{ openshift_openstack_subnet_cidr }}"
+ 
+
+openshift_openstack_etcd_secgroup_rules:
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 2379
+    port_range_max: 2379
+    remote_ip_prefix: "{{ openshift_openstack_master_ingress_cidr }}"
+
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 2380
+    port_range_max: 2380
+    remote_ip_prefix: "{{ openshift_openstack_master_ingress_cidr }}"
+
+

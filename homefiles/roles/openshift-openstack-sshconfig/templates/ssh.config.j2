@@ -1,0 +1,19 @@
+Host * {% if bastion_public_ip %}!{{ openshift_openstack_bastion_hostname }} !{{ bastion_private_ip }}{% endif %}
+
+ControlMaster auto
+ControlPersist 10m
+StrictHostKeyChecking no
+UserKnownHostsFile=/dev/null
+{% if bastion_public_ip %}
+ProxyJump {{ openshift_openstack_bastion_hostname }}
+User {{ openshift_openstack_user }}
+
+Host {{ openshift_openstack_bastion_hostname }} {{ bastion_private_ip }}
+HostName {{ bastion_public_ip }}
+User {{ bastion_username }}
+ForwardAgent yes
+ControlMaster auto
+ControlPersist 10m
+StrictHostKeyChecking no
+UserKnownHostsFile=/dev/null
+{% endif %}

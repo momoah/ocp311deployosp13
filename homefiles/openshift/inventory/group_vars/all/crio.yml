@@ -1,0 +1,10 @@
+---
+# enable cri-o section
+openshift_use_crio: True
+openshift_use_crio_only: True
+openshift_crio_enable_docker_gc: False
+osm_use_cockpit: False
+
+openshift_openstack_master_group_name: node-config-master-crio
+openshift_openstack_compute_group_name: node-config-compute-crio
+openshift_openstack_infra_group_name: node-config-infra-crio

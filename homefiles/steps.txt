@@ -1,0 +1,17 @@
+sh openshift/01_repos.sh 
+reboot
+source scripts/openrc311.sh 
+source openshift/rhsubs.sh
+
+ansible-playbook playbooks/provision_network.yml 
+ansible-playbook playbooks/sshconfig.yml
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/openstack/openshift-cluster/provision.yml
+ansible-playbook openshift/repos.yml
+source loadkey.sh
+ansible nodes -m shell -b -a 'hostnamectl set-hostname {{ inventory_hostname }} '
+ansible nodes -m shell -b -a 'timedatectl set-timezone Australia/Sydney'
+ansible nodes -m copy -b -a 'src=openshift/etc_chrony.conf dest=/etc/chrony.conf'
+ansible nodes -m shell -b -a 'systemctl restart chronyd'
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/openstack/openshift-cluster/install.yml --timeout=1200
+
