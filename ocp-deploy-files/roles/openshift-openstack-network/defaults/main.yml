@@ -1,0 +1,31 @@
+---
+# defaults used specifically for this role
+openshift_openstack_network_action: provision
+openshift_openstack_network_stack_template_path: "{{role_path}}/files/stack.yml"
+openshift_openstack_network_stack_name: openshift-network
+openshift_openstack_bastion_hostname: bastion
+openshift_openstack_bastion_flavor: "{{openshift_openstack_default_flavor}}"
+openshift_openstack_bastion_image: "{{openshift_openstack_default_image_name}}"
+openshift_openstack_bastion_ingress_cidr: 0.0.0.0/0
+openshift_openstack_bastion_secgroup_rules:
+  - direction: ingress
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: "{{openshift_openstack_bastion_ingress_cidr}}"
+  - direction: ingress
+    protocol: icmp
+    remote_ip_prefix: "{{openshift_openstack_bastion_ingress_cidr}}"
+
+# defaults here are taken from the openshift_openstack role from openshift-ansible
+openshift_openstack_full_dns_domain: "{{ (openshift_openstack_clusterid|trim == '') | ternary(openshift_openstack_public_dns_domain, openshift_openstack_clusterid + '.' + openshift_openstack_public_dns_domain) }}"
+openshift_openstack_fqdn_nodes: true
+openshift_openstack_keypair_name: openshift
+
+openshift_openstack_subnet_cidr: "192.168.99.0/24"
+openshift_openstack_pool_start: "192.168.99.3"
+openshift_openstack_pool_end: "192.168.99.254"
+
+openshift_openstack_external_network_name: null
+openshift_openstack_router_name: null
+openshift_openstack_node_subnet_name: null

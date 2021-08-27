@@ -1,0 +1,42 @@
+---
+- name: Handle the stack (create/delete/update)
+  ignore_errors: false
+  become: false
+  register: stack_create
+  until: stack_create is not failed
+  retries: 3
+  delay: 3
+  os_stack:
+    name: "{{openshift_openstack_network_stack_name}}"
+    template: "{{openshift_openstack_network_stack_template_path}}"
+    state: "{{openshift_openstack_network_stack_state}}"
+    parameters:
+      use_fqdn: "{{openshift_openstack_fqdn_nodes}}"
+      domain: "{{openshift_openstack_full_dns_domain}}"
+      public_network: "{{openshift_openstack_external_network_name}}"
+      router_name: "{{openshift_openstack_router_name}}"
+      subnet_name: "{{openshift_openstack_node_subnet_name}}"
+      subnet_cidr: "{{openshift_openstack_subnet_cidr}}"
+      subnet_start: "{{openshift_openstack_pool_start}}"
+      subnet_end: "{{openshift_openstack_pool_end}}"
+      server_name: "{{openshift_openstack_bastion_hostname}}"
+      flavor: "{{openshift_openstack_bastion_flavor}}"
+      image: "{{openshift_openstack_bastion_image}}"
+      keypair: "{{openshift_openstack_keypair_name}}"
+      secgrp_rules: "{{openshift_openstack_bastion_secgroup_rules}}"
+
+- name: get errors in stack creation, if any
+  command: openstack stack failures list {{ openshift_openstack_network_stack_name }}
+  register: stack_create_failures
+  when:
+  - stack_create is failed
+
+- name: show errors in stack creation, if any
+  debug: var=stack_create_failures
+  when:
+  - stack_create is failed
+
+- fail:
+    msg: Stack creation failed
+  when:
+  - stack_create is failed
