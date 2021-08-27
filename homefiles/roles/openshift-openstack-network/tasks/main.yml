@@ -1,9 +1,0 @@
----
-- name: Provision the OpenShift network stack
-  include_tasks: provision.yml
-  when: openshift_openstack_network_action == 'provision'
-
-- name: Tear down the OpenShift network stack
-  include_tasks: teardown.yml
-  when: openshift_openstack_network_action == 'unprovision'
-

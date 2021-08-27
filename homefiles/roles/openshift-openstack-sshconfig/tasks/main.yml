@@ -1,5 +1,0 @@
----
-- name: Generate the ssh config file
-  template:
-    src: "{{ openshift_ssh_config_src_template }}"
-    dest: "{{ openshift_ssh_config_dest_location }}"

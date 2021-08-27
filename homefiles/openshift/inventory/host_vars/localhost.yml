@@ -1,4 +1,0 @@
-localhost:
-  ansible_connection: local 
-  ansible_become: false
-  ansible_user: cloud-user
