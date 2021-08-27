@@ -13,5 +13,9 @@ ansible nodes -m shell -b -a 'hostnamectl set-hostname {{ inventory_hostname }} 
 ansible nodes -m shell -b -a 'timedatectl set-timezone Australia/Sydney'
 ansible nodes -m copy -b -a 'src=openshift/etc_chrony.conf dest=/etc/chrony.conf'
 ansible nodes -m shell -b -a 'systemctl restart chronyd'
+
+# Ensure you update openshift/inventory/group_vars/all/kuryr.yml with the correct public network:
+# kuryr_openstack_public_net_id: 6b624a66-84bf-4835-b874-c744c3e51ff0
+
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/openstack/openshift-cluster/install.yml --timeout=1200
 
