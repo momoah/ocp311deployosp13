@@ -1,3 +1,5 @@
+# Not sure about this, don't use it.
+
 sudo subscription-manager repos \
     --enable="rhel-7-server-rpms" \
     --enable="rhel-7-server-extras-rpms" \
