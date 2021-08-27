@@ -1,0 +1,103 @@
+oc new-project momo
+
+oc adm policy add-scc-to-group anyuid system:serviceaccounts:momo
+
+cat << EOF > momo.yml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: httpd-X
+  labels:
+    k8s-app: momohttpd-X
+  namespace: momo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: momohttpd-X
+  template:
+    metadata:
+      labels:
+        k8s-app: momohttpd-X
+    spec:
+      terminationGracePeriodSeconds: 2
+      containers:
+      - name: httpd-service
+        image: registry.redhat.io/rhel8/httpd-24:latest
+        ports:
+        - containerPort: 8080
+      securityContext:                                                                                                                                     
+        privileged: true                                                                                                                                            
+        runAsUser: 0 
+        volumeMounts:
+          - mountPath: /var/www/html/
+            name: momo-pvc-claim-X
+      volumes:
+        - name: momo-pvc-claim-X
+          persistentVolumeClaim:
+            claimName: momo-pvc-X
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpd-X
+  labels:
+    k8s-app: momohttpd-X
+  namespace: momo
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    k8s-app: momohttpd-X
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: momo-pvc-X
+  namespace: momo
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  name: lb-momohttpd-X
+  namespace: momo
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    nodePort: 300X
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: https
+    nodePort: 310X
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    k8s-app: momohttpd-X
+  sessionAffinity: None
+  type: LoadBalancer
+EOF
+
+ 
+
+for i in {01..10}; do echo $i; sed "s/X/$i/" momo.yml > momo-$i.yml;oc create -f momo-$i.yml;  done
+ 
+
