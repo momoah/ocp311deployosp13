@@ -32,7 +32,7 @@ openshift_openstack_pool_end: "192.168.192.254"
 openshift_openstack_num_masters: 1
 openshift_openstack_num_infra: 1
 openshift_openstack_num_cns: 0
-openshift_openstack_num_nodes: 1
+openshift_openstack_num_nodes: 3
 
 openshift_openstack_master_flavor: "m1.master"
 openshift_openstack_default_flavor: "m1.node"

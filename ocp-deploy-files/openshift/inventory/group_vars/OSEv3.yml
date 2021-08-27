@@ -59,6 +59,7 @@ openshift_cloudprovider_openstack_blockstorage_version: v2
 openshift_cloudprovider_openstack_domain_name: "{{ lookup('env','OS_USER_DOMAIN_NAME') }}"
 #openshift_cloudprovider_openstack_conf_file: <path_to_local_openstack_configuration_file>
 
+# Commented out as I experienced issues getting this to work for some reason
 #Use Cinder volume for Openshift registry:
 #openshift_hosted_registry_storage_kind: openstack
 #openshift_hosted_registry_storage_access_modes: ['ReadWriteOnce']
@@ -105,6 +106,7 @@ ansible_become: true
 #openshift_logging_kibana_nodeselector: {"node-role.kubernetes.io/infra":"true"}
 #openshift_logging_curator_nodeselector: {"node-role.kubernetes.io/infra":"true"}
 
+# The options below disable service catalog, service broker, and monitoring operator (reduces space):
 openshift_service_catalog_remove: true
 openshift_service_catalog_install: false
 ansible_service_broker_remove: true

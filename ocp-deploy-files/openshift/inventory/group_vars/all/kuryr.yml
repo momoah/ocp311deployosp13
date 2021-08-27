@@ -13,6 +13,7 @@ kuryr_openstack_pool_batch: 3
 kuryr_openstack_pool_max: 5
 kuryr_openstack_pool_min: 1
 
+# comment out below if your openstack doesn't have https endpoints (openstack endpoint list)
 #kuryr_openstack_ca: "/home/cloud-user/openshift/ca.crt.pem"
 
 openshift_openstack_kuryr_controller_image: "registry.redhat.io/openshift3/kuryr-controller:{{ openshift_image_tag }}"

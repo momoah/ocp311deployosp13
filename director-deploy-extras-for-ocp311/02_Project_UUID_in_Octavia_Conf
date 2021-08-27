@@ -1,0 +1,24 @@
+Once you have a project:
+
+# (overcloud) [stack@osp13-undercloud scripts]$ openstack project list
+# +----------------------------------+---------+
+# | ID                               | Name    |
+# +----------------------------------+---------+
+# | 7f4145b4eab841bdbf4dc2c40b9cd522 | admin   |
+# | a912ee2f7c6648ef96574a07020550fa | ocp311  |
+# | fbedfbb474864bbcbc15b3e3272846db | service |
+# +----------------------------------+---------+
+
+You need to add the following:
+
+parameter_defaults:
+  ControllerExtraConfig:
+    octavia::config::octavia_config:
+      controller_worker/amp_secgroup_allowed_projects:
+        value: "a912ee2f7c6648ef96574a07020550fa"
+
+In: /home/stack/my_templates/controller-extraconfig.yaml
+
+And re-run the deploy script
+
+

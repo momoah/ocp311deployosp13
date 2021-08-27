@@ -1,0 +1,7 @@
+In order to resolve OpenShift VMs in the tenant network, this needs to be added:
+
+  NeutronDnsDomain: vm.osp.tamlab.pnq2.redhat.com
+  NeutronDhcpAgentDnsmasqDnsServers: [ "10.75.5.25" ]
+  NeutronPluginExtensions: [ "qos", "port_security", "dns" ]
+
+At the end of /home/stack/my_templates/network-environment.yaml
