@@ -2,6 +2,8 @@ oc new-project momo
 
 oc adm policy add-scc-to-group anyuid system:serviceaccounts:momo
 
+# For the below yaml, pick what you need, you might want to remove the pvcs from the whole thing.
+
 cat << EOF > momo.yml
 apiVersion: extensions/v1beta1
 kind: Deployment
