@@ -19,3 +19,30 @@ ansible nodes -m shell -b -a 'systemctl restart chronyd'
 
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/openstack/openshift-cluster/install.yml --timeout=1200
 
+
+-----------------------------------------------------------------------------------------------------------
+ISSUES
+======
+
+I was hitting this:
+
+TASK [openshift-openstack-network : Handle the stack (create/delete/update)] *************************************************************************************************************************************************
+Thursday 16 September 2021  01:33:36 -0400 (0:00:01.225)       0:00:06.583 **** 
+/usr/lib/python2.7/site-packages/requests/__init__.py:91: RequestsDependencyWarning: urllib3 (1.10.2) or chardet (3.0.4) doesn't match a supported version!
+  RequestsDependencyWarning)
+FAILED - RETRYING: Handle the stack (create/delete/update) (3 retries left).
+FAILED - RETRYING: Handle the stack (create/delete/update) (2 retries left).
+FAILED - RETRYING: Handle the stack (create/delete/update) (1 retries left).
+fatal: [localhost]: FAILED! => {"attempts": 3, "changed": false, "msg": "openstacksdk is required for this module"}
+
+So, I tried the follow steps (I believe a relogin to cloud-user might be required:
+
+sudo subscription-manager repos --enable=rhel-server-rhscl-7-rpms
+sudo yum install python27-python-pip -y
+scl enable python27 bash
+which pip
+pip -V
+
+pip install --upgrade --user urllib3==1.22
+pip install --upgrade --user chardet==3.0.2
+
